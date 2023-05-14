@@ -37,10 +37,12 @@ const start = async () => {
     dotenv.config();
     await mongoose.connect(config.get('mongoUri'));
     app.listen(PORT, () => {
+      // eslint-disable-next-line no-console
       console.log(`App listening on port ${PORT}...`);
     });
   } catch (err) {
     const error = (err as Error).message;
+    // eslint-disable-next-line no-console
     console.log('Ошибка сервера', error);
   }
 };
