@@ -1,0 +1,11 @@
+{
+  "port": 3000,
+  "mongoUri": "mongodb://localhost:27017/BDMesto",
+  "usersPath": "/",
+  "idUsersPath": "/:userId",
+  "patchUserPath": "/me",
+  "patchUserAvatarPath": "/me/avatar",
+  "cardsPath": "/",
+  "idCardsPath": "/:cardId",
+  "cardLikesPath": "/:cardId/likes"
+}
