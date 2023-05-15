@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import * as process from 'process';
 import * as dotenv from 'dotenv';
+import { validationResult } from 'express-validator';
 import User from '../models/user';
 import NotFoundError from '../errors/notFound';
 import BadRequest from '../errors/badRequest';
@@ -59,6 +60,7 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction) 
     return res.send({ users });
   } catch (err) {
     next(err);
+    return res.status(500).json({ message: 'Error, try again' });
   }
 };
 
@@ -70,6 +72,7 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
     return res.send({ user });
   } catch (err) {
     next(err);
+    return res.status(500).json({ message: 'Error, try again' });
   }
 };
 
@@ -81,6 +84,9 @@ export const getUserInfo = async (req: Request, res: Response, next: NextFunctio
     return res.json({ user });
   } catch (err) {
     next(err);
+    const errorName = (err as Error).name;
+    if (errorName === 'CastError') return res.status(400).json({ message: 'Incorrect data' });
+    return res.status(500).json({ message: 'Error, try again' });
   }
 };
 
@@ -89,12 +95,20 @@ export const updateUserInfo = async (req: Request, res: Response, next: NextFunc
     const id = (req as any).user._id;
     const { name, about } = req.body;
     const user = await User.findByIdAndUpdate(id, { name, about });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        errors: errors.array(),
+        message: 'Incorrect data',
+      });
+    }
     if (user === null) throw new NotFoundError('Пользователь не найден');
-    else if (!user) throw new BadRequest('Bведены некорректные данные');
-    await user.save();
     return res.send({ message: 'Пользователь успешно обновлен' });
   } catch (err) {
     next(err);
+    const errorName = (err as Error).name;
+    if ((errorName === 'ValidationError') || (errorName === 'CastError')) return res.status(400).json({ message: 'Incorrect data' });
+    return res.status(500).json({ message: 'Error, try again' });
   }
 };
 
@@ -103,11 +117,21 @@ export const updateUserAvatar = async (req: Request, res: Response, next: NextFu
     const id = (req as any).user._id;
     const { avatar } = req.body;
     const user = await User.findByIdAndUpdate(id, { avatar });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        errors: errors.array(),
+        message: 'Incorrect link',
+      });
+    }
     if (user === null) throw new NotFoundError('Пользователь не найден');
     else if (!user) throw new BadRequest('Bведены некорректные данные');
     await user.save();
     return res.send({ message: 'Аватар пользователя успешно обновлен.' });
   } catch (err) {
     next(err);
+    const errorName = (err as Error).name;
+    if ((errorName === 'CastError') || (errorName === 'ValidationError')) return res.status(400).json({ message: 'Incorrect data' });
+    return res.status(500).json({ message: 'Error, try again' });
   }
 };

@@ -13,9 +13,12 @@ export const addCard = async (req: Request, res: Response, next: NextFunction) =
       owner,
     });
     await card.save();
-    return res.status(201).json({ message: `Карточка с названием ${name} успешно создана.` });
+    return res.status(201).json({ message: `Карточка с названием ${name} успешно создана` });
   } catch (err) {
     next(err);
+    const errName = (err as Error).name;
+    if (errName === 'ValidationError') return res.status(400).send({ message: 'Inncorect data' });
+    return res.status(500).json({ message: 'Error, try again' });
   }
 };
 
@@ -25,6 +28,7 @@ export const getCards = async (req: Request, res: Response, next: NextFunction) 
     return res.send({ cards });
   } catch (err) {
     next(err);
+    return res.status(500).json({ message: 'Error, try again' });
   }
 };
 
@@ -41,6 +45,9 @@ export const putLike = async (req: Request, res: Response, next: NextFunction) =
     return res.send({ message: 'Лайк поставлен.' });
   } catch (err) {
     next(err);
+    const errorName = (err as Error).name;
+    if (errorName === 'CastError') return res.status(400).json({ message: 'Inncorect data' });
+    return res.status(500).json({ message: 'Error, try again' });
   }
 };
 
@@ -57,6 +64,9 @@ export const deleteLike = async (req: Request, res: Response, next: NextFunction
     return res.send({ message: 'Лайк удален' });
   } catch (err) {
     next(err);
+    const errorName = (err as Error).name;
+    if (errorName === 'CastError') return res.status(400).json({ message: 'Inncorect data' });
+    return res.status(500).json({ message: 'Error, try again' });
   }
 };
 
@@ -71,5 +81,8 @@ export const deleteCard = async (req: Request, res: Response, next: NextFunction
     return res.send({ message: 'Карточка удалена' });
   } catch (err) {
     next(err);
+    const errorName = (err as Error).name;
+    if (errorName === 'CastError') return res.status(400).json({ message: 'Inncorect data' });
+    return res.status(500).json({ message: 'Error, try again' });
   }
 };

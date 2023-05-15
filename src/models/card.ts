@@ -21,6 +21,7 @@ const cardSchema = new Schema<ICard>(
     likes: [{
       type: Schema.Types.ObjectId,
       ref: 'user',
+      default: [],
     }],
   },
   {
@@ -28,4 +29,4 @@ const cardSchema = new Schema<ICard>(
   },
 );
 
-export default model<ICard>('Card', cardSchema);
+export default model<ICard>('card', cardSchema);
