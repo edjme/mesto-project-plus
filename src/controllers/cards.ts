@@ -16,10 +16,10 @@ export const addCard = async (req: Request, res: Response, next: NextFunction) =
     await card.save();
     return res.send(card);
   } catch (err) {
-    next(err);
     const errName = (err as Error).name;
     if (errName === 'ValidationError') next(new BadRequest((err as Error).message));
     else next(new Error());
+    next(err);
   }
 };
 
@@ -29,7 +29,6 @@ export const getCards = async (req: Request, res: Response, next: NextFunction) 
     return res.send({ cards });
   } catch (err) {
     next(err);
-    return res.status(500).json({ message: 'Error, try again' });
   }
 };
 
@@ -49,7 +48,6 @@ export const putLike = async (req: Request, res: Response, next: NextFunction) =
     const errName = (err as Error).name;
     if (errName === 'CastError') next(new BadRequest((err as Error).message));
     else next(new Error());
-    return res.status(500).json({ message: 'Error, try again' });
   }
 };
 
@@ -69,7 +67,6 @@ export const deleteLike = async (req: Request, res: Response, next: NextFunction
     const errName = (err as Error).name;
     if (errName === 'CastError') next(new BadRequest((err as Error).message));
     else next(new Error());
-    return res.status(500).json({ message: 'Error, try again' });
   }
 };
 
@@ -83,10 +80,9 @@ export const deleteCard = async (req: Request, res: Response, next: NextFunction
     await card.remove();
     return res.send({ message: 'Карточка удалена' });
   } catch (err) {
-    next(err);
     const errName = (err as Error).name;
     if (errName === 'CastError') next(new BadRequest((err as Error).message));
     else next(new Error());
-    return res.status(500).json({ message: 'Error, try again' });
+    next(err);
   }
 };

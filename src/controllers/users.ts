@@ -30,7 +30,9 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
       email, password: hashedPassword, name, about, avatar,
     });
     await user.save();
-    return res.send(user);
+    return res.send({
+      name, about, avatar, email,
+    });
   } catch (err) {
     next(err);
   }
@@ -64,10 +66,10 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction) 
     const users = await User.find({});
     return res.send({ users });
   } catch (err) {
-    next(err);
     const errName = (err as Error).name;
-    if (errName === 'CastError') next(new Unauthorized((err as Error).message));
+    if (errName === 'CastError') next(new BadRequest((err as Error).message));
     else next(new Error());
+    next(err);
   }
 };
 
@@ -94,8 +96,6 @@ export const getUserInfo = async (req: Request, res: Response, next: NextFunctio
     return res.json({ user });
   } catch (err) {
     next(err);
-    const errorName = (err as Error).name;
-    console.log(errorName);
   }
 };
 
@@ -108,8 +108,6 @@ export const updateUserInfo = async (req: Request, res: Response, next: NextFunc
     return res.send({ message: 'Пользователь успешно обновлен' });
   } catch (err) {
     next(err);
-    const errorName = (err as Error).name;
-    console.log(errorName);
   }
 };
 
@@ -119,12 +117,9 @@ export const updateUserAvatar = async (req: Request, res: Response, next: NextFu
     const { avatar } = req.body;
     const user = await User.findByIdAndUpdate(id, { avatar }, updt);
     if (user === null) throw new NotFoundError('Пользователь не найден');
-    else if (!user) throw new BadRequest('Bведены некорректные данные');
     await user.save();
     return res.send(user);
   } catch (err) {
     next(err);
-    const errorName = (err as Error).name;
-    console.log(errorName);
   }
 };
