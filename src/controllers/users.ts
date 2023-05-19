@@ -13,6 +13,11 @@ import Unauthorized from '../errors/unauthorized';
 dotenv.config();
 const { JWT_SECRET = 'TEST_KEY' } = process.env;
 
+const updt = {
+  new: true,
+  runValidators: true,
+};
+
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const {
@@ -85,8 +90,7 @@ export const getUserInfo = async (req: Request, res: Response, next: NextFunctio
   } catch (err) {
     next(err);
     const errorName = (err as Error).name;
-    if (errorName === 'CastError') return res.status(400).json({ message: 'Incorrect data' });
-    return res.status(500).json({ message: 'Error, try again' });
+    console.log(errorName);
   }
 };
 
@@ -94,7 +98,8 @@ export const updateUserInfo = async (req: Request, res: Response, next: NextFunc
   try {
     const id = (req as any).user._id;
     const { name, about } = req.body;
-    const user = await User.findByIdAndUpdate(id, { name, about });
+    const user = await User.findByIdAndUpdate(id, { name, about }, updt);
+    await User.validate();
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -107,8 +112,7 @@ export const updateUserInfo = async (req: Request, res: Response, next: NextFunc
   } catch (err) {
     next(err);
     const errorName = (err as Error).name;
-    if ((errorName === 'ValidationError') || (errorName === 'CastError')) return res.status(400).json({ message: 'Incorrect data' });
-    return res.status(500).json({ message: 'Error, try again' });
+    console.log(errorName);
   }
 };
 
@@ -116,7 +120,7 @@ export const updateUserAvatar = async (req: Request, res: Response, next: NextFu
   try {
     const id = (req as any).user._id;
     const { avatar } = req.body;
-    const user = await User.findByIdAndUpdate(id, { avatar });
+    const user = await User.findByIdAndUpdate(id, { avatar }, updt);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({
@@ -131,7 +135,6 @@ export const updateUserAvatar = async (req: Request, res: Response, next: NextFu
   } catch (err) {
     next(err);
     const errorName = (err as Error).name;
-    if ((errorName === 'CastError') || (errorName === 'ValidationError')) return res.status(400).json({ message: 'Incorrect data' });
-    return res.status(500).json({ message: 'Error, try again' });
+    console.log(errorName);
   }
 };
