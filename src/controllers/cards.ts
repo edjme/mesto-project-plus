@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import Card from '../models/card';
 import NotFoundError from '../errors/notFound';
 import Forbidden from '../errors/forbidden';
+import BadRequest from '../errors/badRequest';
 
 export const addCard = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -13,12 +14,12 @@ export const addCard = async (req: Request, res: Response, next: NextFunction) =
       owner,
     });
     await card.save();
-    return res.status(201).json({ message: `Карточка с названием ${name} успешно создана` });
+    return res.send(card);
   } catch (err) {
     next(err);
     const errName = (err as Error).name;
-    if (errName === 'ValidationError') return res.status(400).send({ message: 'Inncorect data' });
-    return res.status(500).json({ message: 'Error, try again' });
+    if (errName === 'ValidationError') next(new BadRequest((err as Error).message));
+    else next(new Error());
   }
 };
 
@@ -45,8 +46,9 @@ export const putLike = async (req: Request, res: Response, next: NextFunction) =
     return res.send({ message: 'Лайк поставлен.' });
   } catch (err) {
     next(err);
-    const errorName = (err as Error).name;
-    if (errorName === 'CastError') return res.status(400).json({ message: 'Inncorect data' });
+    const errName = (err as Error).name;
+    if (errName === 'CastError') next(new BadRequest((err as Error).message));
+    else next(new Error());
     return res.status(500).json({ message: 'Error, try again' });
   }
 };
@@ -64,8 +66,9 @@ export const deleteLike = async (req: Request, res: Response, next: NextFunction
     return res.send({ message: 'Лайк удален' });
   } catch (err) {
     next(err);
-    const errorName = (err as Error).name;
-    if (errorName === 'CastError') return res.status(400).json({ message: 'Inncorect data' });
+    const errName = (err as Error).name;
+    if (errName === 'CastError') next(new BadRequest((err as Error).message));
+    else next(new Error());
     return res.status(500).json({ message: 'Error, try again' });
   }
 };
@@ -81,8 +84,9 @@ export const deleteCard = async (req: Request, res: Response, next: NextFunction
     return res.send({ message: 'Карточка удалена' });
   } catch (err) {
     next(err);
-    const errorName = (err as Error).name;
-    if (errorName === 'CastError') return res.status(400).json({ message: 'Inncorect data' });
+    const errName = (err as Error).name;
+    if (errName === 'CastError') next(new BadRequest((err as Error).message));
+    else next(new Error());
     return res.status(500).json({ message: 'Error, try again' });
   }
 };
