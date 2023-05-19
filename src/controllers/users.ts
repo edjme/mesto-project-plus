@@ -99,14 +99,6 @@ export const updateUserInfo = async (req: Request, res: Response, next: NextFunc
     const id = (req as any).user._id;
     const { name, about } = req.body;
     const user = await User.findByIdAndUpdate(id, { name, about }, updt);
-    await User.validate();
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        errors: errors.array(),
-        message: 'Incorrect data',
-      });
-    }
     if (user === null) throw new NotFoundError('Пользователь не найден');
     return res.send({ message: 'Пользователь успешно обновлен' });
   } catch (err) {
@@ -121,13 +113,6 @@ export const updateUserAvatar = async (req: Request, res: Response, next: NextFu
     const id = (req as any).user._id;
     const { avatar } = req.body;
     const user = await User.findByIdAndUpdate(id, { avatar }, updt);
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        errors: errors.array(),
-        message: 'Incorrect link',
-      });
-    }
     if (user === null) throw new NotFoundError('Пользователь не найден');
     else if (!user) throw new BadRequest('Bведены некорректные данные');
     await user.save();
