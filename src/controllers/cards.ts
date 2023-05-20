@@ -44,10 +44,10 @@ export const putLike = async (req: Request, res: Response, next: NextFunction) =
     if (!card) throw new NotFoundError('Карточки с таким ID не существует');
     return res.send({ message: 'Лайк поставлен.' });
   } catch (err) {
-    next(err);
     const errName = (err as Error).name;
     if (errName === 'CastError') next(new BadRequest((err as Error).message));
     else next(new Error());
+    next(err);
   }
 };
 
@@ -63,10 +63,10 @@ export const deleteLike = async (req: Request, res: Response, next: NextFunction
     if (!card) throw new NotFoundError('Карточки с таким ID не существует');
     return res.send({ message: 'Лайк удален' });
   } catch (err) {
-    next(err);
     const errName = (err as Error).name;
     if (errName === 'CastError') next(new BadRequest((err as Error).message));
     else next(new Error());
+    next(err);
   }
 };
 

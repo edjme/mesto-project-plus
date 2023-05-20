@@ -3,7 +3,6 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import * as process from 'process';
 import * as dotenv from 'dotenv';
-import { validationResult } from 'express-validator';
 import User from '../models/user';
 import NotFoundError from '../errors/notFound';
 import BadRequest from '../errors/badRequest';
@@ -82,7 +81,7 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
   } catch (err) {
     next(err);
     const errName = (err as Error).name;
-    if (errName === 'CastError') next(new NotFoundError((err as Error).message));
+    if (errName === 'CastError') next(new BadRequest((err as Error).message));
     else next(new Error());
     return res.status(500).json({ message: 'Error, try again' });
   }

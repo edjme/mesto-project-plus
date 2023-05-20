@@ -38,6 +38,9 @@
         "ts": "never"
       }
     ],
-    "no-underscore-dangle": ["error", { "allow": ["_id"] }]
+    "no-underscore-dangle": ["error", { "allow": ["_id"] }],
+    "consistent-return": "off",
+    "no-useless-escape": "off",
+    "eslint no-throw-literal": "off"
   }
 }
