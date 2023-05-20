@@ -50,10 +50,6 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       JWT_SECRET!,
       { expiresIn: '7d' },
     );
-    res.cookie('jwt', token, {
-      maxAge: 3600000,
-      httpOnly: true,
-    });
     return res.json({ token, _id: user._id });
   } catch (err) {
     next(err);
@@ -67,8 +63,7 @@ export const getUsers = async (req: Request, res: Response, next: NextFunction) 
   } catch (err) {
     const errName = (err as Error).name;
     if (errName === 'CastError') next(new BadRequest((err as Error).message));
-    else next(new Error());
-    next(err);
+    else next(err);
   }
 };
 
@@ -79,11 +74,9 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
     if (!user) throw new NotFoundError('Пользователь не найден');
     return res.send({ user });
   } catch (err) {
-    next(err);
     const errName = (err as Error).name;
     if (errName === 'CastError') next(new BadRequest((err as Error).message));
-    else next(new Error());
-    return res.status(500).json({ message: 'Error, try again' });
+    else next(err);
   }
 };
 

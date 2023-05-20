@@ -18,8 +18,7 @@ export const addCard = async (req: Request, res: Response, next: NextFunction) =
   } catch (err) {
     const errName = (err as Error).name;
     if (errName === 'ValidationError') next(new BadRequest((err as Error).message));
-    else next(new Error());
-    next(err);
+    else next(err);
   }
 };
 
@@ -46,8 +45,7 @@ export const putLike = async (req: Request, res: Response, next: NextFunction) =
   } catch (err) {
     const errName = (err as Error).name;
     if (errName === 'CastError') next(new BadRequest((err as Error).message));
-    else next(new Error());
-    next(err);
+    else next(err);
   }
 };
 
@@ -65,8 +63,7 @@ export const deleteLike = async (req: Request, res: Response, next: NextFunction
   } catch (err) {
     const errName = (err as Error).name;
     if (errName === 'CastError') next(new BadRequest((err as Error).message));
-    else next(new Error());
-    next(err);
+    else next(err);
   }
 };
 
@@ -82,7 +79,6 @@ export const deleteCard = async (req: Request, res: Response, next: NextFunction
   } catch (err) {
     const errName = (err as Error).name;
     if (errName === 'CastError') next(new BadRequest((err as Error).message));
-    else next(new Error());
-    next(err);
+    else next(err);
   }
 };
